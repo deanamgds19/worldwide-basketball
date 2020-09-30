@@ -1,0 +1,120 @@
+---
+title: "Worldwide Professional Basketball Analysis"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r} 
+#upload data
+
+library(readr)
+player_stats <- read_csv("players_stats_by_season_full_details.csv")
+```
+
+```{r}
+# throughout the years, how have race statistics changed regarding police deaths?
+library(dplyr)
+
+meanFGA <- player_stats %>% group_by(League) %>% filter(League %in% c("NBA", "Euroleague", "Lithuanian-LKL", "Mexican-LNBP", "Chinese-CBA", "Canadian-NBL")) %>% summarise(avgFGA = mean(FGA)) %>% arrange(avgFGA)
+
+meanFGM <- player_stats %>% group_by(League) %>% filter(League %in% c("NBA", "Euroleague", "Lithuanian-LKL", "Mexican-LNBP", "Chinese-CBA", "Canadian-NBL")) %>%  summarise(avgFGM = mean(FGM)) %>% arrange(avgFGM)
+
+meanAST <- player_stats %>% group_by(League) %>% filter(League %in% c("NBA", "Euroleague", "Lithuanian-LKL", "Mexican-LNBP", "Chinese-CBA", "Canadian-NBL")) %>% summarise(avgAST = mean(AST)) %>% arrange(avgAST)
+
+meanHT <- player_stats %>% group_by(League) %>% filter(League %in% c("NBA", "Euroleague", "Lithuanian-LKL", "Mexican-LNBP", "Chinese-CBA", "Canadian-NBL")) %>% summarise(avgHT = mean(height_cm, na.rm = TRUE)) %>% arrange(avgHT)
+
+medianMinPlayed <- player_stats %>% group_by(League) %>% filter(League %in% c("NBA", "Euroleague", "Lithuanian-LKL", "Mexican-LNBP", "Chinese-CBA", "Canadian-NBL")) %>% summarise(avgMP = median(MIN, na.rm = TRUE)) %>% arrange(avgMP)
+```
+
+
+```{r}
+library(ggplot2)
+
+ggplot(meanFGA) +
+  geom_col(aes(x = League, y = avgFGA, fill = League)) +
+  coord_flip() +
+  labs(title = "Average Player FGA Per 2019-2020 League", y = "Average Field Goal Attempts")
+  
+
+
+```
+
+```{r}
+
+ggplot(meanAST) +
+  geom_col(aes(x = League, y = avgAST, fill = League)) +
+  coord_flip() +
+  labs(title = "Average Player Assists Per 2019-2020 League", y = "Average Assists")
+
+
+```
+
+
+```{r}
+ggplot(meanFGM) +
+  geom_col(aes(x = League, y = avgFGM, fill = League)) +
+  coord_flip() +
+  labs(title = "Average Player FGM Per 2019-2020 League", y = "Average Field Goals Made")
+
+
+
+```
+
+```{r}
+ggplot(meanHT) +
+  geom_col(aes(x = League, y = avgHT, fill = League)) +
+  labs(title = "Average Player Height Per 2019-2020 League", y = "Average Height") +
+  coord_flip() +
+  scale_y_continuous(limits = c(0, 250), breaks = seq(0, 250, 100), labels = seq(0, 250, 100))
+
+
+```
+
+```{r}
+ggplot(medianMinPlayed) +
+  geom_col(aes(x = League, y = avgMP, fill = League)) +
+  labs(title = "Median Minutes Played Per 2019-2020 League", y = "Median Minutes Played") +
+  coord_flip() +
+  scale_y_continuous(limits = c(0, 1500), breaks = seq(0, 1500, 500), labels = seq(0, 1500, 500))
+```
+
+
+```{r}
+
+sampleplayer <- player_stats %>% group_by(League) %>% filter(League %in% c("NBA", "Euroleague", "Lithuanian-LKL", "Mexican-LNBP", "Chinese-CBA", "Canadian-NBL")) %>% sample_n(50)
+
+ggplot(sampleplayer, aes(x = height_cm, y = GP, color = League)) +
+    geom_point() + 
+  labs(title = "Games Played According to Height Per League", x = "Height (cm)", y = "Games Played") +
+  geom_jitter()
+
+```
+
+```{r}
+ggplot(sampleplayer, aes(x = PF, y = log(REB), color = League)) +
+    geom_point() + 
+  labs(title = "Rebounds According to Personal Fouls Per League", x = "Personal Fouls", y = "Rebounds") +
+  geom_jitter(width = 0.5) 
+
+
+```
+
+
+```{r}
+ggplot(sampleplayer, aes(x = height_cm, y = BLK, color = League)) +
+    geom_point() + 
+  labs(title = "Blocks According to Height Per League", x = "Height (cm)", y = "Blocks") +
+  geom_jitter(width = 1) 
+
+```
+
+```{r}
+ggplot(sampleplayer, aes(x = weight, y = STL, color = League)) +
+    geom_point() + 
+  labs(title = "Steals According to Weight Per League", x = "Weight (lbs)", y = "Steals") +
+  scale_x_discrete(breaks = seq(0, 300, 50), labels = seq(0, 300, 50)) 
+
+```
