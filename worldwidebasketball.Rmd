@@ -15,7 +15,7 @@ player_stats <- read_csv("players_stats_by_season_full_details.csv")
 ```
 
 ```{r}
-# throughout the years, how have race statistics changed regarding police deaths?
+# differences between NBA, Euroleague, Lithuanian-LKL, Mexican-LNBP, Chinese-CBA and Canadian-NBL
 library(dplyr)
 
 meanFGA <- player_stats %>% group_by(League) %>% filter(League %in% c("NBA", "Euroleague", "Lithuanian-LKL", "Mexican-LNBP", "Chinese-CBA", "Canadian-NBL")) %>% summarise(avgFGA = mean(FGA)) %>% arrange(avgFGA)
